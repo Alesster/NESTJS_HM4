@@ -6,8 +6,8 @@ import { SrvRecord } from 'dns';
 import { ethers } from 'ethers';
 import e from 'express';
 
-const CONTRACT_ADDRESS = '0x8D0E9A88def307e8412562E91bc44429C83cA611';
-const CONTRACT_ADDRESS_TB = '0xf0b2a3808cd20c3dca6c82a3586962d851d79046';
+const CONTRACT_ADDRESS = '0x6E2eb6e2f59454d158b31Fd100a93f6eac67a85A';
+const CONTRACT_ADDRESS_TB = '0x7802d3dd23453f090d3a802622ce4bfbed884eac';
 
 export class ClaimPaymentDTO {
   id: string;
@@ -133,13 +133,19 @@ export class AppService {
     return delegateTx;
   }
 
-  async castVote(body: ClaimCastVote) {
+  castVote(body: ClaimCastVote) {
     const element = this.database.find((entry) => entry.secret === body.secret);
     if (!element) throw new HttpException('Not Found', 404);
-    const voteTx = await this.signedContractTB
+    const voteTx = this.signedContractTB
       .connect(this.acc1)
       .vote(body.proposal, body.amount);
-    return await voteTx.wait();
+    return voteTx;
+  }
+
+  async getVoteCount(id_proposal: number) {
+    const proposal = await this.contractTb.proposals(id_proposal);
+    const voteCount = proposal.voteCount;
+    return voteCount;
   }
 
   getWinningProposal() {

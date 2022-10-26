@@ -66,6 +66,11 @@ export class AppController {
     return this.appService.castVote(body);
   }
 
+  @Get('vote-count')
+  getVoteCount(@Query('id') id: number) {
+    return this.appService.getVoteCount(id);
+  }
+
   @Get('winning-proposal')
   getWinningProposal() {
     return this.appService.getWinningProposal();
